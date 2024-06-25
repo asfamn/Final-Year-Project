@@ -1,0 +1,66 @@
+<!-- templates/index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What's Cooking?</title>
+</head>
+<body>
+    <h1>What's Cooking?</h1>
+    <form id="recipeForm" action="/recipe" method="get">
+        <label for="ingredients">Enter ingredients you would like to cook with:</label>
+        <input type="text" id="ingredients" name="ingredients" required>
+        <button type="button" onclick="getRecommendations()">Give me recommendations!</button>
+    </form>
+
+    <div id="recipeContainer">
+        <!-- Recipe Recommendations will be displayed here -->
+    </div>
+
+    <script>
+        function getRecommendations() {
+            var form = document.getElementById("recipeForm");
+            var formData = new FormData(form);
+    
+            fetch("/recipe?" + new URLSearchParams(formData))
+                .then(response => response.json())
+                .then(data => displayRecommendations(data));
+        }
+    
+        function displayRecommendations(recipeData) {
+            console.log(recipeData);
+            var container = document.getElementById("recipeContainer");
+            container.innerHTML = ""; // Clear previous content
+    
+            if (recipeData) {
+                var list = document.createElement("ul");
+    
+                recipeData.forEach(function (row) {
+                    // Create a list item for each recipe title
+                    var listItem = document.createElement("li");
+    
+                    // Encode the recipe name to be used in the URL
+                    var encodedRecipeName = encodeURIComponent(row.recipe_name);
+    
+                    // Create a link for the recipe title
+                    var link = document.createElement("a");
+                    link.href = "/recipe/detail/" + encodedRecipeName;
+                    link.appendChild(document.createTextNode(row.recipe_name));
+    
+                    // Append the link to the list item
+                    listItem.appendChild(link);
+    
+                    // Append the list item to the list
+                    list.appendChild(listItem);
+                });
+    
+                container.appendChild(list);
+            }
+        }
+        
+    </script>
+</body>
+</html>

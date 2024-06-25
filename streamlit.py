@@ -2,7 +2,7 @@ import streamlit as st
 from PIL import Image
 from io import BytesIO
 import requests
-import validators
+# import validators
 
 
 import config,reci_rec
